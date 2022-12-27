@@ -73,7 +73,10 @@ class CreateTaskPage extends StatelessWidget {
 
   Widget buildButton(String name, String? isSelected){
     return InkWell(
-      onTap: () => createTaskController.streamSelectDate.sink.add(name),
+      onTap: () {
+        createTaskController.streamSelectDate.sink.add(name);
+        print(createTaskController.pickDate(name));
+      },
       child: Text(
         name,
         style: TextStyle(
