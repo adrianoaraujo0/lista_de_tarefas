@@ -87,25 +87,28 @@ ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (Todo object, fb.Builder fbb) {
-          final titleOffset = fbb.writeString(object.title);
+          final titleOffset =
+              object.title == null ? null : fbb.writeString(object.title!);
           fbb.startTable(4);
           fbb.addInt64(0, object.id ?? 0);
           fbb.addOffset(1, titleOffset);
-          fbb.addInt64(2, object.dateTime.millisecondsSinceEpoch);
+          fbb.addInt64(2, object.dateTime?.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id ?? 0;
         },
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
-          final object = Todo(
-              title: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              dateTime: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)))
+          final dateTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 8);
+          final object = Todo()
             ..id =
-                const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 4);
+                const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 4)
+            ..title = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 6)
+            ..dateTime = dateTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(dateTimeValue);
 
           return object;
         })

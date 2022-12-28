@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:lista_de_tarefas/database/objectbox_database.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_page.dart';
 
-void main(){
-  runApp( MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await ObjectBoxDatabase.create();
+
+  runApp( const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -4,8 +4,11 @@ import 'package:objectbox/objectbox.dart';
 class Todo {
 
   int? id;
-  String title;
-  DateTime dateTime;
+  String? title;
+  DateTime? dateTime;
+  
+  @Transient()
+  bool itsDone;
 
-  Todo({required this.title, required this.dateTime});
+  Todo([ this.dateTime ,this.title, this.itsDone = false]);
 }
