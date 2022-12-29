@@ -22,7 +22,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(1, 3797581759815929810),
       name: 'Todo',
-      lastPropertyId: const IdUid(3, 7936910538614886567),
+      lastPropertyId: const IdUid(4, 5463725641682732750),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -39,6 +39,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(3, 7936910538614886567),
             name: 'dateTime',
             type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 5463725641682732750),
+            name: 'itsDone',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -89,10 +94,11 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Todo object, fb.Builder fbb) {
           final titleOffset =
               object.title == null ? null : fbb.writeString(object.title!);
-          fbb.startTable(4);
+          fbb.startTable(5);
           fbb.addInt64(0, object.id ?? 0);
           fbb.addOffset(1, titleOffset);
           fbb.addInt64(2, object.dateTime?.millisecondsSinceEpoch);
+          fbb.addBool(3, object.itsDone);
           fbb.finish(fbb.endTable());
           return object.id ?? 0;
         },
@@ -101,14 +107,16 @@ ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final dateTimeValue =
               const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 8);
-          final object = Todo()
+          final object = Todo(
+              dateTime: dateTimeValue == null
+                  ? null
+                  : DateTime.fromMillisecondsSinceEpoch(dateTimeValue),
+              title: const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 6),
+              itsDone: const fb.BoolReader()
+                  .vTableGetNullable(buffer, rootOffset, 10))
             ..id =
-                const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 4)
-            ..title = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 6)
-            ..dateTime = dateTimeValue == null
-                ? null
-                : DateTime.fromMillisecondsSinceEpoch(dateTimeValue);
+                const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 4);
 
           return object;
         })
@@ -128,4 +136,7 @@ class Todo_ {
   /// see [Todo.dateTime]
   static final dateTime =
       QueryIntegerProperty<Todo>(_entities[0].properties[2]);
+
+  /// see [Todo.itsDone]
+  static final itsDone = QueryBooleanProperty<Todo>(_entities[0].properties[3]);
 }

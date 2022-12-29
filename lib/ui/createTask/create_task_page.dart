@@ -1,12 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/createTask/create_task_controller.dart';
+import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 
+// ignore: must_be_immutable
 class CreateTaskPage extends StatefulWidget {
-  const CreateTaskPage({Key? key}) : super(key: key);
+  CreateTaskPage({required this.menuController ,Key? key}) : super(key: key);
+  MenuController menuController;
+
 
   @override
   State<CreateTaskPage> createState() => _CreateTaskPageState();
@@ -14,13 +16,19 @@ class CreateTaskPage extends StatefulWidget {
 
 class _CreateTaskPageState extends State<CreateTaskPage> {
   final CreateTaskController createTaskController = CreateTaskController();
-
+   
   @override
   void initState() {
     createTaskController.streamTodo.sink.add(Todo());
     super.initState();
   }
 
+  @override
+  void dispose() {
+    widget.menuController.updatelistTasks();
+    createTaskController.streamTodo.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +86,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      createTaskController.addTask(context ,snapshot.data);
+                      createTaskController.addTask(context, snapshot.data);
                     },
                     child: Container(
                       height: 100,
@@ -116,9 +124,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   Widget buildButton(BuildContext context ,String name, String? isSelected){
     return InkWell(
       onTap: () async {
-
         DateTime? date = await createTaskController.pickDate(context, name);
-        createTaskController.streamTodo.sink.add(Todo(date));
+        createTaskController.streamTodo.sink.add(Todo(dateTime: date));
         createTaskController.streamSelectDate.sink.add(name);
       },
       child: Text(

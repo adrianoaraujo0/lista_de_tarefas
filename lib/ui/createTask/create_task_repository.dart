@@ -3,7 +3,7 @@ import 'package:lista_de_tarefas/models/todo.dart';
 
 class CreateTaskRepository{
 
-  addTask(Todo todo){
+  void addTask(Todo todo){
     ObjectBoxDatabase.todoBox.put(todo);
   }
 

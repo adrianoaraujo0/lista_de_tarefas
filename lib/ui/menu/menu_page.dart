@@ -18,11 +18,15 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    menuController.listTasks();
-    
+    menuController.updatelistTasks();
     super.initState();
   }
 
+  @override
+  void dispose() {
+    menuController.deleteTask();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +36,6 @@ class _MenuPageState extends State<MenuPage> {
         stream: menuController.streamTasks.stream,
         builder: (context, snapshot) {
           if(snapshot.hasData){
-          print(snapshot.data!.length);
             return Stack(
               children: [
                 Container(
@@ -47,7 +50,14 @@ class _MenuPageState extends State<MenuPage> {
                         child: const Icon(FontAwesomeIcons.bars,  color: ListColors.lightBlack, size: 30),
                       ),
                       const SizedBox(height: 30),
-                      const Text("Tasks", style: TextStyle(fontSize: 50, color: ListColors.purple)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text("Tasks", style: TextStyle(fontSize: 50, color: ListColors.purple)),
+                          buildButtonRemove()
+                        ],
+                      ),
                       const SizedBox(height: 80),
                       Expanded(
                         child: Row(
@@ -62,30 +72,7 @@ class _MenuPageState extends State<MenuPage> {
                                 buildButtonsRotate("Last Week"),
                               ],
                             ),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: snapshot.data!.length,
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(0),
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () => menuController.updateTask(snapshot.data![index]),
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 40),
-                                      child: Text(
-                                        "${snapshot.data![index].title}", 
-                                        style: TextStyle(
-                                          fontSize: 26,
-                                          decoration: snapshot.data![index].itsDone ? TextDecoration.lineThrough : TextDecoration.none,
-                                          decorationColor: ListColors.purple,
-                                          decorationStyle: TextDecorationStyle.solid
-                                        )
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )       
+                            buildListTasks(snapshot.data)   
                           ],
                         ),
                       )             
@@ -119,9 +106,75 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  Widget buildListTasks(List<Todo>? listTasks){
+    return  Expanded(
+      child: ListView.builder(
+        itemCount: listTasks!.length,
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(0),
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () => menuController.updateTask(listTasks[index]),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(25, 0, 0, 40),
+              child: Text(
+                "${listTasks[index].title}", 
+                style: TextStyle(
+                  fontSize: 26,
+                  decoration: listTasks[index].itsDone == null || listTasks[index].itsDone == false
+                  ? TextDecoration.none
+                  : TextDecoration.lineThrough,
+                  decorationColor: ListColors.purple,
+                  decorationStyle: TextDecorationStyle.solid
+                )
+              ),
+            ),
+          );
+        },
+      ),
+    );     
+  }
+
+  Widget buildTask(Todo task){
+    return InkWell(
+      onTap: () => menuController.updateTask(task),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(25, 0, 0, 40),
+        child: Text(
+          "${task.title}", 
+          style: TextStyle(
+            fontSize: 26,
+            decoration: task.itsDone == null || task.itsDone == false
+            ? TextDecoration.none
+            : TextDecoration.lineThrough,
+            decorationColor: ListColors.purple,
+            decorationStyle: TextDecorationStyle.solid
+          )
+        ),
+      ),
+    );
+  }
+
+   buildButtonRemove(){
+    return StreamBuilder<bool>(
+      stream: menuController.streamDeleteTasks.stream,
+      builder: (context, snapshot) {
+        return IconButton(
+          onPressed: () => menuController.deleteTask(),
+          icon: Icon(
+            Icons.delete,
+            color: snapshot.data == null || snapshot.data! == false 
+            ? ListColors.grey
+            : ListColors.purpleDark
+          )
+        );
+      }, 
+    );
+  }
+
   Widget buildButtonCreateTask(BuildContext context){
     return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateTaskPage())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTaskPage(menuController: menuController))),
       child: Container(
         padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
         decoration: const BoxDecoration(
@@ -135,18 +188,11 @@ class _MenuPageState extends State<MenuPage> {
             height: 40,
             width: 40,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: ListColors.purpleDark),
-            child: const Icon(Icons.add, color: ListColors.white,),
+            child: const Icon(Icons.add, color: ListColors.white),
           ),
         ),
       ),
     );
   }
 
-  Widget buildListToDo(){
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return Container();
-      },
-    );
-  }
 }

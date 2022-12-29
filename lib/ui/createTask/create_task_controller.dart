@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/createTask/create_task_repository.dart';
+import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:rxdart/subjects.dart';
 
 class CreateTaskController{
+
+  MenuController menuController = MenuController();
 
   TextEditingController taskController = TextEditingController();
   BehaviorSubject<String> streamSelectDate = BehaviorSubject<String>();
@@ -12,16 +17,14 @@ class CreateTaskController{
 
   CreateTaskRepository createTaskRepository = CreateTaskRepository();
 
-  void addTask(BuildContext context ,Todo? todo){
+  void addTask(BuildContext context, Todo? todo){
     formKey.currentState!.validate();
     validateDate(context, todo);
-
 
     if(formKey.currentState!.validate() && validateDate(context, todo)){
       todo!.title = taskController.text;
 
       createTaskRepository.addTask(todo);
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Saved task"))
       );

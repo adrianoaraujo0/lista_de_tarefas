@@ -6,9 +6,7 @@ class Todo {
   int? id;
   String? title;
   DateTime? dateTime;
-  
-  @Transient()
-  bool itsDone;
+  bool? itsDone;
 
-  Todo([ this.dateTime ,this.title, this.itsDone = false]);
+  Todo({this.dateTime ,this.title, this.itsDone});
 }
