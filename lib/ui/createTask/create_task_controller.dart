@@ -43,27 +43,25 @@ class CreateTaskController{
   }
 
   Future<DateTime?> pickDate( BuildContext context ,String value) async{
-
-    DateTime date = DateTime.now();
-
+    
+    DateTime now = DateTime.parse(DateTime.now().toString().split(" ").first);
+    
     if(value == "Today"){
-      return date;
+      return now;
     
     }else if(value == "Tomorrow"){
-      return date.add( const Duration(days: 1));
+      return now.add( const Duration(days: 1));
 
     }else{
       DateTime? selectedDate = await showDatePicker(
-          context: context,
-          firstDate: DateTime.now(),
-          initialDate: DateTime.now(),
-          lastDate: DateTime.utc(2050),
+        context: context,
+        firstDate: DateTime.now(),
+        initialDate: DateTime.now(),
+        lastDate: DateTime.utc(2050),
       );
       
       return selectedDate;
-    
     }
-
   }
 
 }

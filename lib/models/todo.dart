@@ -5,6 +5,7 @@ class Todo {
 
   int? id;
   String? title;
+  
   DateTime? dateTime;
   bool? itsDone;
 

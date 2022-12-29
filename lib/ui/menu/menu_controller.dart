@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_repository.dart';
 import 'package:rxdart/subjects.dart';
@@ -7,8 +9,13 @@ class MenuController{
   MenuRepository menuRepository = MenuRepository();
   BehaviorSubject<List<Todo>> streamTasks = BehaviorSubject<List<Todo>>();
   BehaviorSubject<bool> streamDeleteTasks = BehaviorSubject<bool>();
+  BehaviorSubject<String> streamFilterTasks = BehaviorSubject<String>();
 
   void updatelistTasks(){
+    menuRepository.findAllTasks().forEach((element) {
+      print(element.title);
+      print(element.dateTime!.millisecondsSinceEpoch);
+    });
     streamTasks.sink.add(menuRepository.findAllTasks());
   }
 
@@ -30,6 +37,32 @@ class MenuController{
     if(completedTasks().isNotEmpty){
       menuRepository.deleteTask(completedTasks().map((e) => e.id!).toList());
       updatelistTasks();
+      streamDeleteTasks.sink.add(completedTasks().isNotEmpty);
     }
   }
+
+  void filterTasksToday(String day){
+    DateTime now = DateTime.parse(DateTime.now().toString().split(" ").first);
+
+
+    if(day == "All"){
+
+      updatelistTasks();
+
+    }else if(day == "Today"){
+
+      streamTasks.sink.add(menuRepository.findTasksToday(now));
+
+    }else if(day == "Tomorrow"){
+
+      streamTasks.sink.add(menuRepository.findTasksToday(now.add(const Duration(days: 1))));
+
+    }else{
+
+      streamTasks.sink.add(menuRepository.findTasksToday(now.subtract(const Duration(days: 7))));
+
+    }
+  }
+
+
 }

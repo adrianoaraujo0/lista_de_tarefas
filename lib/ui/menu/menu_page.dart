@@ -59,23 +59,7 @@ class _MenuPageState extends State<MenuPage> {
                         ],
                       ),
                       const SizedBox(height: 80),
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              children: [
-                                buildButtonsRotate("Today", strong: true),
-                                const SizedBox(height: 100),
-                                buildButtonsRotate("Tomorrow"),
-                                const SizedBox(height: 100),
-                                buildButtonsRotate("Last Week"),
-                              ],
-                            ),
-                            buildListTasks(snapshot.data)   
-                          ],
-                        ),
-                      )             
+                      buildMenu(snapshot.data!)           
                     ],
                   ),
                 ),
@@ -98,10 +82,46 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget buildButtonsRotate(String name, {bool strong = false}){
-    return RotatedBox(
-      quarterTurns: 3,
-      child: Text(name, style: TextStyle(color: ListColors.purple, fontSize: 25, fontWeight: strong ? FontWeight.bold : FontWeight.w300, fontFamily: "Arial")
+  Widget buildMenu(List<Todo> listTasks){
+    return Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildButtonFilterTask(),
+          buildListTasks(listTasks)   
+        ],
+      ),
+    );
+  }
+
+  Widget buildButtonFilterTask(){
+    return StreamBuilder<String>(
+      stream: menuController.streamFilterTasks.stream,
+      initialData: "",
+      builder: (context, snapshot) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            buildButtonsRotate("All", snapshot.data!),
+            buildButtonsRotate("Today", snapshot.data!),
+            buildButtonsRotate("Tomorrow", snapshot.data!),
+            buildButtonsRotate("Last Week", snapshot.data!),
+          ],
+        );
+      }
+    );
+  }
+
+  Widget buildButtonsRotate(String name, String isPressed){
+    return InkWell(
+      onTap: () {
+        menuController.streamFilterTasks.sink.add(name);
+        menuController.filterTasksToday(name);
+      },
+      child: RotatedBox(
+        quarterTurns: 3,
+        child: Text(name, style: TextStyle(color: name != isPressed ? ListColors.grey: ListColors.purple, fontSize: 25, fontWeight: FontWeight.w300,fontFamily: "Arial")
+        ),
       ),
     );
   }
@@ -113,23 +133,7 @@ class _MenuPageState extends State<MenuPage> {
         shrinkWrap: true,
         padding: const EdgeInsets.all(0),
         itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () => menuController.updateTask(listTasks[index]),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 0, 40),
-              child: Text(
-                "${listTasks[index].title}", 
-                style: TextStyle(
-                  fontSize: 26,
-                  decoration: listTasks[index].itsDone == null || listTasks[index].itsDone == false
-                  ? TextDecoration.none
-                  : TextDecoration.lineThrough,
-                  decorationColor: ListColors.purple,
-                  decorationStyle: TextDecorationStyle.solid
-                )
-              ),
-            ),
-          );
+          return buildTask(listTasks[index]);
         },
       ),
     );     
