@@ -1,23 +1,18 @@
-import 'dart:developer';
-
+import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_repository.dart';
 import 'package:rxdart/subjects.dart';
 
 class MenuController{
 
+  final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   MenuRepository menuRepository = MenuRepository();
   BehaviorSubject<List<Todo>> streamTasks = BehaviorSubject<List<Todo>>();
   BehaviorSubject<bool> streamDeleteTasks = BehaviorSubject<bool>();
   BehaviorSubject<String> streamFilterTasks = BehaviorSubject<String>();
 
-  void updatelistTasks(){
-    menuRepository.findAllTasks().forEach((element) {
-      print(element.title);
-      print(element.dateTime!.millisecondsSinceEpoch);
-    });
-    streamTasks.sink.add(menuRepository.findAllTasks());
-  }
+  void updatelistTasks()=> streamTasks.sink.add(menuRepository.findAllTasks());
+
 
   void updateTask(Todo todo){
     if(todo.itsDone == null || todo.itsDone == false){
@@ -44,25 +39,24 @@ class MenuController{
   void filterTasksToday(String day){
     DateTime now = DateTime.parse(DateTime.now().toString().split(" ").first);
 
-
     if(day == "All"){
 
       updatelistTasks();
 
     }else if(day == "Today"){
 
-      streamTasks.sink.add(menuRepository.findTasksToday(now));
+      streamTasks.sink.add(menuRepository.findTasks(now));
 
     }else if(day == "Tomorrow"){
 
-      streamTasks.sink.add(menuRepository.findTasksToday(now.add(const Duration(days: 1))));
+      streamTasks.sink.add(menuRepository.findTasks(now.add(const Duration(days: 1))));
 
     }else{
 
-      streamTasks.sink.add(menuRepository.findTasksToday(now.subtract(const Duration(days: 7))));
+      streamTasks.sink.add(menuRepository.findTasks(now.subtract(const Duration(days: 7))));
 
     }
   }
-
+ 
 
 }

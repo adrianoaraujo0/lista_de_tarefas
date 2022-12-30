@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lista_de_tarefas/components/drawer_component.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/createTask/create_task_page.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
@@ -32,6 +33,7 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ListColors.white,
+      drawer: const DrawerComponent(),
       body: StreamBuilder<List<Todo>>(
         stream: menuController.streamTasks.stream,
         builder: (context, snapshot) {
@@ -41,13 +43,13 @@ class _MenuPageState extends State<MenuPage> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  padding: EdgeInsets.fromLTRB(25, MediaQuery.of(context).padding.top + 25, 25, 55),
+                  padding: EdgeInsets.fromLTRB(25, MediaQuery.of(context).padding.top, 25, 55),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       InkWell(
-                        onTap: () {},
-                        child: const Icon(FontAwesomeIcons.bars,  color: ListColors.lightBlack, size: 30),
+                        onTap: () => Scaffold.of(context).openDrawer(),
+                        child: const Icon(FontAwesomeIcons.bars, color: ListColors.purple,),
                       ),
                       const SizedBox(height: 30),
                       Row(
@@ -144,16 +146,32 @@ class _MenuPageState extends State<MenuPage> {
       onTap: () => menuController.updateTask(task),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(25, 0, 0, 40),
-        child: Text(
-          "${task.title}", 
-          style: TextStyle(
-            fontSize: 26,
-            decoration: task.itsDone == null || task.itsDone == false
-            ? TextDecoration.none
-            : TextDecoration.lineThrough,
-            decorationColor: ListColors.purple,
-            decorationStyle: TextDecorationStyle.solid
-          )
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              "${task.title}", 
+              style: TextStyle(
+                fontSize: 26,
+                decoration: task.itsDone == null || task.itsDone == false
+                ? TextDecoration.none
+                : TextDecoration.lineThrough,
+                decorationColor: ListColors.purple,
+                decorationStyle: TextDecorationStyle.solid
+              )
+            ),
+            Text(
+              "Goal: ${task.dateTime!.day}/${task.dateTime!.month}/${task.dateTime!.year}",
+              style: TextStyle(
+                decoration: task.itsDone == null || task.itsDone == false
+                ? TextDecoration.none
+                : TextDecoration.lineThrough,
+                decorationColor: ListColors.purple,
+                decorationStyle: TextDecorationStyle.solid
+              )
+            )
+          ],
         ),
       ),
     );
