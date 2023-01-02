@@ -39,17 +39,16 @@ class MenuController{
   void filterTasks(String day){
     DateTime now = DateTime.parse(DateTime.now().toString().split(" ").first);
 
-    if(day == "All"){
+    if(day == "All tasks"){
 
       updatelistTasks();
 
-    }else if(day == "Today"){
+    }else if(day == "Pending"){
+      streamTasks.sink.add(menuRepository.findTasksCompleted(false));
 
-      streamTasks.sink.add(menuRepository.findTasks(now));
+    }else if(day == "Completed"){
 
-    }else if(day == "Tomorrow"){
-
-      streamTasks.sink.add(menuRepository.findTasks(now.add(const Duration(days: 1))));
+      streamTasks.sink.add(menuRepository.findTasksCompleted(true));
 
     }else{
 

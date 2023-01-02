@@ -69,10 +69,6 @@ class _CalenderPageState extends State<CalenderPage> {
     );
   }
 
-  buildDateAndAmountTasks(){
-
-  }
-
   buildListTasks(BuildContext context, DateTime dateTime){
     return StreamBuilder<List<Todo>>(
       stream: calendarController.streamTasksCalender.stream,

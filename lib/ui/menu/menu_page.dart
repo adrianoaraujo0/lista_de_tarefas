@@ -100,17 +100,14 @@ class _MenuPageState extends State<MenuPage> {
   Widget buildButtonFilterTask(){
     return StreamBuilder<String>(
       stream: menuController.streamFilterTasks.stream,
-      initialData: "All",
+      initialData: "All tasks",
       builder: (context, snapshot) {
         return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            buildButtonsRotate("All", snapshot.data!),
-            buildButtonsRotate("Today", snapshot.data!),
-            buildButtonsRotate("Tomorrow", snapshot.data!),
-            buildButtonsRotate("Last Week", snapshot.data!),
+            buildButtonsRotate("All tasks", snapshot.data!),
             buildButtonsRotate("Pending", snapshot.data!),
-            buildButtonsRotate("Completed Tasks", snapshot.data!),
+            buildButtonsRotate("Completed", snapshot.data!),
           ],
         );
       }

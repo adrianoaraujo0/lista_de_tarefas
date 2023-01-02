@@ -13,6 +13,10 @@ class MenuRepository{
     return ObjectBoxDatabase.todoBox.query(Todo_.dateTime.equals(dateTime.millisecondsSinceEpoch)).build().find();
   }
 
+  List<Todo> findTasksCompleted(bool isCompleted){
+    return ObjectBoxDatabase.todoBox.query(Todo_.itsDone.equals(isCompleted)).build().find();
+  }
+
   void updateTask(Todo todo) => ObjectBoxDatabase.todoBox.put(todo);
 
 
