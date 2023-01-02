@@ -4,7 +4,10 @@ import 'package:lista_de_tarefas/models/todo.dart';
 
 class MenuRepository{
 
-  List<Todo> findAllTasks() =>ObjectBoxDatabase.todoBox.getAll();
+  List<Todo> findAllTasks() {
+
+    return ObjectBoxDatabase.todoBox.query().order(Todo_.dateTime).build().find();
+  }
 
   List<Todo> findTasks(DateTime dateTime) {
     return ObjectBoxDatabase.todoBox.query(Todo_.dateTime.equals(dateTime.millisecondsSinceEpoch)).build().find();

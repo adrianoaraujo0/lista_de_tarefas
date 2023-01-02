@@ -8,8 +8,15 @@ class CalendarController{
   BehaviorSubject<DateTime> streamCalender = BehaviorSubject<DateTime>();
   BehaviorSubject<List<Todo>> streamTasksCalender = BehaviorSubject<List<Todo>>();
   MenuRepository menuRepository = MenuRepository();
+  MenuController menuController = MenuController();
+
+  void initPage(){
+    String now = DateTime.now().toString().split(" ").first;
+    streamTasksCalender.sink.add(menuRepository.findTasks(DateTime.parse(now)));
+  }
 
   void filterTasks(DateTime dateTime){
+    print(menuRepository.findTasks(DateTime.parse(dateTime.toString().split(" ").toList().first)));
     streamTasksCalender.sink.add(menuRepository.findTasks(DateTime.parse(dateTime.toString().split(" ").toList().first)));
   }  
 

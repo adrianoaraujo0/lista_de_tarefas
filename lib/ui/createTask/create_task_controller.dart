@@ -25,12 +25,19 @@ class CreateTaskController{
       todo!.title = taskController.text;
 
       createTaskRepository.addTask(todo);
+      clearObject();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Saved task"))
       );
     }
-
   }
+
+  clearObject(){
+    taskController.clear();
+    streamTodo.sink.add(Todo());
+    streamSelectDate.sink.add("");
+  }
+
 
  bool validateDate(BuildContext context ,Todo? todo){
     if(todo?.dateTime == null){

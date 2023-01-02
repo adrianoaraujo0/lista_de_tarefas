@@ -36,7 +36,7 @@ class MenuController{
     }
   }
 
-  void filterTasksToday(String day){
+  void filterTasks(String day){
     DateTime now = DateTime.parse(DateTime.now().toString().split(" ").first);
 
     if(day == "All"){

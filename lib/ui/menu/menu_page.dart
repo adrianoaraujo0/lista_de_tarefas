@@ -6,6 +6,7 @@ import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/createTask/create_task_page.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
+import 'package:lista_de_tarefas/extensions.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -99,7 +100,7 @@ class _MenuPageState extends State<MenuPage> {
   Widget buildButtonFilterTask(){
     return StreamBuilder<String>(
       stream: menuController.streamFilterTasks.stream,
-      initialData: "",
+      initialData: "All",
       builder: (context, snapshot) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,6 +109,8 @@ class _MenuPageState extends State<MenuPage> {
             buildButtonsRotate("Today", snapshot.data!),
             buildButtonsRotate("Tomorrow", snapshot.data!),
             buildButtonsRotate("Last Week", snapshot.data!),
+            buildButtonsRotate("Pending", snapshot.data!),
+            buildButtonsRotate("Completed Tasks", snapshot.data!),
           ],
         );
       }
@@ -118,7 +121,7 @@ class _MenuPageState extends State<MenuPage> {
     return InkWell(
       onTap: () {
         menuController.streamFilterTasks.sink.add(name);
-        menuController.filterTasksToday(name);
+        menuController.filterTasks(name);
       },
       child: RotatedBox(
         quarterTurns: 3,
@@ -150,19 +153,21 @@ class _MenuPageState extends State<MenuPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              "${task.title}", 
-              style: TextStyle(
-                fontSize: 26,
-                decoration: task.itsDone == null || task.itsDone == false
-                ? TextDecoration.none
-                : TextDecoration.lineThrough,
-                decorationColor: ListColors.purple,
-                decorationStyle: TextDecorationStyle.solid
-              )
+            Expanded(
+              child: Text(
+                "${task.title}", 
+                style: TextStyle(
+                  fontSize: 25,
+                  decoration: task.itsDone == null || task.itsDone == false
+                  ? TextDecoration.none
+                  : TextDecoration.lineThrough,
+                  decorationColor: ListColors.purple,
+                  decorationStyle: TextDecorationStyle.solid
+                )
+              ),
             ),
             Text(
-              "Goal: ${task.dateTime!.day}/${task.dateTime!.month}/${task.dateTime!.year}",
+              "${task.dateTime!.day.padLeft}/${task.dateTime!.month.padLeft}/${task.dateTime!.year}",
               style: TextStyle(
                 decoration: task.itsDone == null || task.itsDone == false
                 ? TextDecoration.none

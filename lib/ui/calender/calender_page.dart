@@ -3,11 +3,23 @@ import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/calender/calender_controller.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:lista_de_tarefas/extensions.dart';
 
-class CalenderPage extends StatelessWidget {
+class CalenderPage extends StatefulWidget {
   CalenderPage({super.key});
 
+  @override
+  State<CalenderPage> createState() => _CalenderPageState();
+}
+
+class _CalenderPageState extends State<CalenderPage> {
   CalendarController calendarController = CalendarController();
+
+  @override
+  void initState() {
+    calendarController.initPage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,36 +27,31 @@ class CalenderPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ListColors.white,
         appBar: AppBar(backgroundColor: ListColors.white,elevation: 0, iconTheme: const IconThemeData(color: ListColors.purple)),
-        body: Container(
-          padding: const EdgeInsets.all(20),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Calender", style: TextStyle(color: ListColors.purple, fontSize: 40)),
-              SizedBox(height: MediaQuery.of(context).size.height*0.05),
-              buildStreamBuildCalender(),
-              buildListTasks()
-            ],
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: StreamBuilder<DateTime>(
+            stream: calendarController.streamCalender.stream,
+            initialData: DateTime.now(),
+            builder: (context, snapshot) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Calender", style: TextStyle(color: ListColors.purple, fontSize: 40)),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.05),
+                  buildCalender(snapshot.data!),
+                  SizedBox(height: MediaQuery.of(context).size.height*0.05),
+                  buildListTasks(context, snapshot.data!)
+                ],
+              );
+            }
           ),
         ),
       ),
     );
   }
 
-  buildStreamBuildCalender(){
-    return StreamBuilder<DateTime>(
-      stream: calendarController.streamCalender.stream,
-      initialData: DateTime.now(),
-      builder: (context, snapshot) {
-        return buildCalender(snapshot.data!);
-      }
-    );
-  }
-
   buildCalender(DateTime dateTime){
-    return  TableCalendar(
+    return TableCalendar(
       calendarStyle: const CalendarStyle(
         weekendTextStyle: TextStyle(color: Colors.red),
         todayDecoration: BoxDecoration(color: ListColors.purple,shape: BoxShape.circle),
@@ -52,36 +59,62 @@ class CalenderPage extends StatelessWidget {
       headerStyle: const HeaderStyle(titleCentered: true, formatButtonVisible: false),
       currentDay: dateTime,
       focusedDay: dateTime,
+      
       firstDay: DateTime.now(),
       lastDay: DateTime.utc(2050),
       onDaySelected: (selectedDay, focusedDay) {
         calendarController.streamCalender.sink.add(selectedDay);
-        calendarController.filterTasks(dateTime);
+        calendarController.filterTasks(selectedDay);
       },
     );
   }
 
-  buildListTasks(){
+  buildDateAndAmountTasks(){
+
+  }
+
+  buildListTasks(BuildContext context, DateTime dateTime){
     return StreamBuilder<List<Todo>>(
       stream: calendarController.streamTasksCalender.stream,
-      initialData: const [],
       builder: (context, snapshot) {
         if(snapshot.hasData){
-          return Expanded(
-            child: ListView.builder(
-              itemCount: snapshot.data!.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Text(snapshot.data![index].title!);
-              },
-            ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    style: const TextStyle(fontSize: 20),
+                    dateTime.toString().split(" ").first == DateTime.now().toString().split(" ").first
+                    ? "Today - ${snapshot.data!.length} Task(s)"
+                    : "${dateTime.day.padLeft}/${dateTime.month.padLeft}/${dateTime.year} - ${snapshot.data!.length} Task(s)",
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return buildTask(snapshot.data![index]);
+                  },
+                ),
+              ),
+            ],
           );
-        }else{
-          return Container();
         }
+        return Container();
       }
     );
   }
 
-
+  buildTask(Todo todo){
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(todo.title!, style: const TextStyle(fontSize: 30)),
+    );
+  }
 }
