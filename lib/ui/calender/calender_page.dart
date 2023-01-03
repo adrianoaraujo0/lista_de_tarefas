@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/calender/calender_controller.dart';
+import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:lista_de_tarefas/extensions.dart';
@@ -50,15 +51,21 @@ class _CalenderPageState extends State<CalenderPage> {
     );
   }
 
-  buildCalender(DateTime dateTime){
+  buildCalender(DateTime dateTimeSelected){
     return TableCalendar(
       calendarStyle: const CalendarStyle(
         weekendTextStyle: TextStyle(color: Colors.red),
         todayDecoration: BoxDecoration(color: ListColors.purple,shape: BoxShape.circle),
+        holidayDecoration: BoxDecoration(border: Border.fromBorderSide(BorderSide(color: Color.fromARGB(255, 207, 184, 235), width: 1.4)), shape: BoxShape.circle, color: Color.fromARGB(255, 192, 176, 213)),
+        
       ),
       headerStyle: const HeaderStyle(titleCentered: true, formatButtonVisible: false),
-      currentDay: dateTime,
-      focusedDay: dateTime,
+      currentDay: dateTimeSelected,
+      focusedDay: dateTimeSelected,
+      holidayPredicate: (day) {
+          DateTime onlyDate = DateTime.parse(day.toString().split(" ").first);
+          return calendarController.getTaskDates().contains(onlyDate);
+      },
       
       firstDay: DateTime.now(),
       lastDay: DateTime.utc(2050),

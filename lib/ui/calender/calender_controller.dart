@@ -8,7 +8,6 @@ class CalendarController{
   BehaviorSubject<DateTime> streamCalender = BehaviorSubject<DateTime>();
   BehaviorSubject<List<Todo>> streamTasksCalender = BehaviorSubject<List<Todo>>();
   MenuRepository menuRepository = MenuRepository();
-  MenuController menuController = MenuController();
 
   void initPage(){
     String now = DateTime.now().toString().split(" ").first;
@@ -20,4 +19,10 @@ class CalendarController{
     streamTasksCalender.sink.add(menuRepository.findTasks(DateTime.parse(dateTime.toString().split(" ").toList().first)));
   }  
 
+  List<DateTime?> getTaskDates() {
+    // print(menuRepository.findAllTasks().map((e) => e.dateTime).toList());
+    print("${menuRepository.findAllTasks().map((e) => e.dateTime == DateTime.parse("2023-01-18")).first}");
+
+    return menuRepository.findAllTasks().map((e) => e.dateTime).toList();
+  }
 }

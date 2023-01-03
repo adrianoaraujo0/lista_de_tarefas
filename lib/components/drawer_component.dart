@@ -60,7 +60,9 @@ class DrawerComponent extends StatelessWidget {
 
   Widget buildText({required BuildContext context, dynamic route, required String title, bool isSettings = false}){
     return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => route)),
+      onTap: route != null
+      ? () => Navigator.push(context, MaterialPageRoute(builder: (context) => route))
+      : (){},
       child: Text(title, style: TextStyle(color: ListColors.white, fontSize: isSettings ? 20 : 35)),
     );
   }
