@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/database/objectbox_database.dart';
+import 'package:lista_de_tarefas/login/login_page.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_page.dart';
 
 void main() async{
@@ -12,12 +13,11 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   
-  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MenuPage(),
+      home: LoginPage(),
     );
   }
 }

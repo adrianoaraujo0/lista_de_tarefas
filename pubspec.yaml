@@ -31,6 +31,14 @@ dependencies:
   #DATE_FORMAT
   intl:
 
+  #FIREBASE
+  firebase_storage: ^11.0.8
+  firebase_auth: ^4.2.1
+  firebase_core: ^2.3.0
+  cloud_firestore: ^4.0.5
+
+  google_sign_in: ^5.4.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,6 +53,9 @@ objectbox:
   output_dir: database
 
 flutter:
+
+  assets:
+  - assets/images/
 
   uses-material-design: true
 
