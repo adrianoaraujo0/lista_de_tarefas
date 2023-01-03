@@ -18,7 +18,15 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset("assets/images/clipboard.png", color: ListColors.white, height: 120),
-            const Text("HELLO THERE!, \nWELCOME\nONBOARD!", style: TextStyle(color: ListColors.white, fontSize: 30)),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Text("HELLO THERE!, \nWELCOME\nONBOARD!", style: TextStyle(color: ListColors.white, fontSize: 30)),
+            ),
+            Row(
+              children: const [
+                 Text("Sign In With Google")
+              ],
+            )
           ],
         ),
       ),
