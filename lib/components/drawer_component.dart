@@ -33,8 +33,6 @@ class DrawerComponent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: MediaQuery.of(context).size.height*0.06),
-                      buildText(context: context, title: "Dashboard"),
-                      SizedBox(height: MediaQuery.of(context).size.height*0.04),
                       buildText(context: context, title: "Calender", route: CalenderPage()),
                       SizedBox(height: MediaQuery.of(context).size.height*0.04),
                       buildText(context: context, title: "Settings"),

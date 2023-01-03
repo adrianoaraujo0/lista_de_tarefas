@@ -23,7 +23,7 @@ class CreateTaskController{
 
     if(formKey.currentState!.validate() && validateDate(context, todo)){
       todo!.title = taskController.text;
-
+      todo.itsDone = false;
       createTaskRepository.addTask(todo);
       clearObject();
       ScaffoldMessenger.of(context).showSnackBar(

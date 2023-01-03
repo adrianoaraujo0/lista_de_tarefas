@@ -36,9 +36,9 @@ class _MenuPageState extends State<MenuPage> {
       backgroundColor: ListColors.white,
       drawer: const DrawerComponent(),
       body: StreamBuilder<List<Todo>>(
+        initialData: const [],
         stream: menuController.streamTasks.stream,
         builder: (context, snapshot) {
-          if(snapshot.hasData){
             return Stack(
               children: [
                 Container(
@@ -78,43 +78,41 @@ class _MenuPageState extends State<MenuPage> {
                 )
               ],
             );
-          }
-          return Container();
         }
       ),
     );
   }
 
   Widget buildMenu(List<Todo> listTasks){
-    return Expanded(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildButtonFilterTask(),
-          buildListTasks(listTasks)   
-        ],
-      ),
-    );
-  }
-
-  Widget buildButtonFilterTask(){
     return StreamBuilder<String>(
       stream: menuController.streamFilterTasks.stream,
       initialData: "All tasks",
       builder: (context, snapshot) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            buildButtonsRotate("All tasks", snapshot.data!),
-            buildButtonsRotate("Pending", snapshot.data!),
-            buildButtonsRotate("Completed", snapshot.data!),
-          ],
+        return Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildButtonFilterTask(snapshot.data!),
+              buildListTasks(listTasks, snapshot.data!)   
+            ],
+          ),
         );
       }
     );
   }
 
-  Widget buildButtonsRotate(String name, String isPressed){
+  Widget buildButtonFilterTask(String buttonPressed){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        buildButtonsRotate("All tasks", buttonPressed),
+        buildButtonsRotate("Pending", buttonPressed),
+        buildButtonsRotate("Completed", buttonPressed),
+      ],
+    );
+  }
+
+  Widget buildButtonsRotate(String name, String buttonPressed){
     return InkWell(
       onTap: () {
         menuController.streamFilterTasks.sink.add(name);
@@ -122,28 +120,28 @@ class _MenuPageState extends State<MenuPage> {
       },
       child: RotatedBox(
         quarterTurns: 3,
-        child: Text(name, style: TextStyle(color: name != isPressed ? ListColors.grey: ListColors.purple, fontSize: 25, fontWeight: FontWeight.w300,fontFamily: "Arial")
+        child: Text(name, style: TextStyle(color: name != buttonPressed ? ListColors.grey: ListColors.purple, fontSize: 25, fontWeight: FontWeight.w300,fontFamily: "Arial")
         ),
       ),
     );
   }
 
-  Widget buildListTasks(List<Todo>? listTasks){
+  Widget buildListTasks(List<Todo>? listTasks, String buttonPressed){
     return  Expanded(
       child: ListView.builder(
         itemCount: listTasks!.length,
         shrinkWrap: true,
         padding: const EdgeInsets.all(0),
         itemBuilder: (context, index) {
-          return buildTask(listTasks[index]);
+          return buildTask(listTasks[index], buttonPressed);
         },
       ),
     );     
   }
 
-  Widget buildTask(Todo task){
+  Widget buildTask(Todo task, String buttonPressed){
     return InkWell(
-      onTap: () => menuController.updateTask(task),
+      onTap: () => menuController.updateTask(task, buttonPressed),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(25, 0, 0, 40),
         child: Row(
@@ -181,7 +179,7 @@ class _MenuPageState extends State<MenuPage> {
 
    buildButtonRemove(){
     return StreamBuilder<bool>(
-      stream: menuController.streamDeleteTasks.stream,
+      stream: menuController.streamIconDeleteTasks.stream,
       builder: (context, snapshot) {
         return IconButton(
           onPressed: () => menuController.deleteTask(),

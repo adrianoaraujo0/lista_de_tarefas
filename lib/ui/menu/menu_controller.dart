@@ -8,22 +8,22 @@ class MenuController{
   final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   MenuRepository menuRepository = MenuRepository();
   BehaviorSubject<List<Todo>> streamTasks = BehaviorSubject<List<Todo>>();
-  BehaviorSubject<bool> streamDeleteTasks = BehaviorSubject<bool>();
+  BehaviorSubject<bool> streamIconDeleteTasks = BehaviorSubject<bool>();
   BehaviorSubject<String> streamFilterTasks = BehaviorSubject<String>();
 
   void updatelistTasks()=> streamTasks.sink.add(menuRepository.findAllTasks());
 
+  void updateTask(Todo todo, String buttonPressed){
 
-  void updateTask(Todo todo){
-    if(todo.itsDone == null || todo.itsDone == false){
-      todo.itsDone = true;
+      todo.itsDone = !todo.itsDone!; 
+      menuRepository.updateTask(todo);
+      streamIconDeleteTasks.sink.add(completedTasks().isNotEmpty);
+
+    if(buttonPressed == "All tasks"){
+      updatelistTasks();
     }else{
-      todo.itsDone = false;
+      streamTasks.sink.add(menuRepository.findTasksCompleted(!todo.itsDone!));
     }
-    menuRepository.updateTask(todo);
-    streamDeleteTasks.sink.add(completedTasks().isNotEmpty);
-
-    updatelistTasks();
   }
 
   List<Todo> completedTasks()=> menuRepository.findAllTasks().where((element) => element.itsDone == true).toList();
@@ -32,27 +32,22 @@ class MenuController{
     if(completedTasks().isNotEmpty){
       menuRepository.deleteTask(completedTasks().map((e) => e.id!).toList());
       updatelistTasks();
-      streamDeleteTasks.sink.add(completedTasks().isNotEmpty);
+      streamIconDeleteTasks.sink.add(completedTasks().isNotEmpty);
     }
   }
 
-  void filterTasks(String day){
-    DateTime now = DateTime.parse(DateTime.now().toString().split(" ").first);
+  void filterTasks(String name){
 
-    if(day == "All tasks"){
+    if(name == "All tasks"){
 
       updatelistTasks();
 
-    }else if(day == "Pending"){
+    }else if(name == "Pending"){
       streamTasks.sink.add(menuRepository.findTasksCompleted(false));
 
-    }else if(day == "Completed"){
-
+    }else if(name == "Completed"){
+     
       streamTasks.sink.add(menuRepository.findTasksCompleted(true));
-
-    }else{
-
-      streamTasks.sink.add(menuRepository.findTasks(now.subtract(const Duration(days: 7))));
 
     }
   }
