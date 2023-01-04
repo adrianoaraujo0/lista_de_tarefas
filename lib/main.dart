@@ -9,10 +9,7 @@ import 'package:lista_de_tarefas/login/login_page.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_page.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await ObjectBoxDatabase.create();
-  await Firebase.initializeApp();
+void validatorConnection(ConnectivityResult result) async{
 
   var connectivityResult = await Connectivity().checkConnectivity();
   if (connectivityResult == ConnectivityResult.none) {
@@ -20,6 +17,15 @@ void main() async{
   } else{
     runApp(const MyApp());
   }
+
+}
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await ObjectBoxDatabase.create();
+  await Firebase.initializeApp();
+
+ runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 
-void main() async{
-  runApp(const WithoutConnection());
-}
-
 class WithoutConnection extends StatefulWidget {
   const WithoutConnection({Key? key}) : super(key: key);
 
