@@ -39,6 +39,8 @@ dependencies:
 
   google_sign_in: ^5.4.2
 
+  connectivity_plus: ^3.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

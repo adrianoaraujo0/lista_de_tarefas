@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lista_de_tarefas/login/login_page.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_repository.dart';
 import 'package:rxdart/subjects.dart';
@@ -52,5 +55,17 @@ class MenuController{
     }
   }
  
+  Future<void> signOut(BuildContext context) async{
+    GoogleSignIn a = GoogleSignIn();
+    await FirebaseAuth.instance.signOut().whenComplete(
+      (){
+        if(FirebaseAuth.instance.currentUser == null){
+          
+          a.signOut();
+          return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+        }
+      }
+    );
+  }
 
 }

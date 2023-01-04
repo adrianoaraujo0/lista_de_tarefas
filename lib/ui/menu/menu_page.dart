@@ -1,4 +1,5 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lista_de_tarefas/components/drawer_component.dart';
@@ -32,54 +33,59 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ListColors.white,
-      drawer: const DrawerComponent(),
-      body: StreamBuilder<List<Todo>>(
-        initialData: const [],
-        stream: menuController.streamTasks.stream,
-        builder: (context, snapshot) {
-            return Stack(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  padding: EdgeInsets.fromLTRB(25, MediaQuery.of(context).padding.top, 25, 55),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      InkWell(
-                        onTap: () => Scaffold.of(context).openDrawer(),
-                        child: const Icon(FontAwesomeIcons.bars, color: ListColors.purple,),
-                      ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          backgroundColor: ListColors.white,
+          drawer: DrawerComponent(),
+          body: StreamBuilder<List<Todo>>(
+            initialData: const [],
+            stream: menuController.streamTasks.stream,
+            builder: (context, snapshot) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      padding: EdgeInsets.fromLTRB(25, MediaQuery.of(context).padding.top, 25, 55),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Tasks", style: TextStyle(fontSize: 50, color: ListColors.purple)),
-                          buildButtonRemove()
+                          InkWell(
+                            onTap: () => Scaffold.of(context).openDrawer(),
+                            child: const Icon(FontAwesomeIcons.bars, color: ListColors.purple,),
+                          ),
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Text("Tasks", style: TextStyle(fontSize: 50, color: ListColors.purple)),
+                              buildButtonRemove()
+                            ],
+                          ),
+                          const SizedBox(height: 80),
+                          buildMenu(snapshot.data!)           
                         ],
                       ),
-                      const SizedBox(height: 80),
-                      buildMenu(snapshot.data!)           
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      buildButtonCreateTask(context)
-                    ]
-                  ),
-                )
-              ],
-            );
-        }
-      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          buildButtonCreateTask(context)
+                        ]
+                      ),
+                    )
+                  ],
+                );
+            }
+          ),
+        );
+      }
     );
   }
 

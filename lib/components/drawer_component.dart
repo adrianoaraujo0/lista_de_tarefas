@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/ui/calender/calender_page.dart';
+import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 
 class DrawerComponent extends StatelessWidget {
-  const DrawerComponent({super.key});
+  DrawerComponent({super.key});
+  final MenuController menuController = MenuController();
 
 
   @override
@@ -47,6 +49,11 @@ class DrawerComponent extends StatelessWidget {
                       buildText(context: context, title: "Private Policy", isSettings: true),
                       SizedBox(height: MediaQuery.of(context).size.height*0.04),
                       buildText(context: context, title:"License", isSettings: true),
+                      SizedBox(height: MediaQuery.of(context).size.height*0.04),
+                      InkWell(
+                        onTap: () =>  menuController.signOut(context),
+                        child: const Icon(Icons.logout, color: ListColors.white, size: 30)
+                      ),
                     ],
                   ),
                 ]
@@ -66,4 +73,6 @@ class DrawerComponent extends StatelessWidget {
       child: Text(title, style: TextStyle(color: ListColors.white, fontSize: isSettings ? 20 : 35)),
     );
   }
+
+
 }
