@@ -1,4 +1,5 @@
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -43,6 +44,7 @@ class _MenuPageState extends State<MenuPage> {
             initialData: const [],
             stream: menuController.streamTasks.stream,
             builder: (context, snapshot) {
+                menuController.teste();
                 return Stack(
                   children: [
                     Container(

@@ -20,9 +20,6 @@ class CalendarController{
   }  
 
   List<DateTime?> getTaskDates() {
-    // print(menuRepository.findAllTasks().map((e) => e.dateTime).toList());
-    print("${menuRepository.findAllTasks().map((e) => e.dateTime == DateTime.parse("2023-01-18")).first}");
-
     return menuRepository.findAllTasks().map((e) => e.dateTime).toList();
   }
 }

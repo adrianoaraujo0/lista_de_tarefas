@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -60,7 +63,6 @@ class MenuController{
     await FirebaseAuth.instance.signOut().whenComplete(
       (){
         if(FirebaseAuth.instance.currentUser == null){
-          
           a.signOut();
           return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
         }
@@ -68,4 +70,14 @@ class MenuController{
     );
   }
 
+  Future<void> teste() async{
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // I am connected to a mobile network.
+      log("I am connected to a mobile network");
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      // I am connected to a wifi network.
+      log("I am connected to a wifi network");
+    }
+  }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/calender/calender_controller.dart';
-import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:lista_de_tarefas/extensions.dart';
@@ -79,6 +78,7 @@ class _CalenderPageState extends State<CalenderPage> {
   buildListTasks(BuildContext context, DateTime dateTime){
     return StreamBuilder<List<Todo>>(
       stream: calendarController.streamTasksCalender.stream,
+      initialData: const [],
       builder: (context, snapshot) {
         if(snapshot.hasData){
           return Column(

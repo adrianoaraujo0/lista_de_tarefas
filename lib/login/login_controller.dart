@@ -7,8 +7,8 @@ class LoginController{
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try{
-      // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Trigger the authentication flow
       if(googleUser == null)return;
 
       // Obtain the auth details from the request
@@ -26,7 +26,7 @@ class LoginController{
      });
      
     }on FirebaseAuthException catch(e){
-      print(e);
+      print(e.code == 'network_error');
     }
       
   }
