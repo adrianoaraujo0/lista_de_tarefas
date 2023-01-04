@@ -10,15 +10,15 @@ import 'package:lista_de_tarefas/ui/menu/menu_page.dart';
 import 'package:lista_de_tarefas/utils/list_colors.dart';
 
 void validatorConnection(ConnectivityResult result) async{
+  // var connectivityResult = await Connectivity().checkConnectivity();
+  
+    if (result == ConnectivityResult.none) {
+      runApp(const WithoutConnection());
+    } else{
+      runApp(const MyApp());
+    }
 
-  var connectivityResult = await Connectivity().checkConnectivity();
-  if (connectivityResult == ConnectivityResult.none) {
-    runApp(const WithoutConnection());
-  } else{
-    runApp(const MyApp());
   }
-
-}
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      validatorConnection(result);
     });
     super.initState();
   }
