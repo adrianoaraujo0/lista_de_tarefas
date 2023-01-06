@@ -1,5 +1,5 @@
-import 'dart:developer';
-
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,7 @@ class MenuController{
   BehaviorSubject<List<Todo>> streamTasks = BehaviorSubject<List<Todo>>();
   BehaviorSubject<bool> streamIconDeleteTasks = BehaviorSubject<bool>();
   BehaviorSubject<String> streamFilterTasks = BehaviorSubject<String>();
+  // late StreamSubscription<ConnectivityResult> connectivitySubscription;
 
   void updatelistTasks()=> streamTasks.sink.add(menuRepository.findAllTasks());
 
@@ -70,14 +71,56 @@ class MenuController{
     );
   }
 
-  Future<void> teste() async{
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile) {
-      // I am connected to a mobile network.
-      log("I am connected to a mobile network");
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      // I am connected to a wifi network.
-      log("I am connected to a wifi network");
-    }
+  validateUser() async{
+
+    QuerySnapshot<Map<String, dynamic>> tasksFirebase = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").get();
+    List<int> idsTasksFirebase = tasksFirebase.docs.map((e) => e.data()["id"] as int).toList();
+    idsTasksFirebase.sort();
+
+    List<int> idsTasksObject = tasksFirebase.docs.map((e) => e.data()["id"] as int).toList();
+    idsTasksObject.sort();
+
+    print("box: ${idsTasksObject}");
+    tasksFirebase.docs.map((e) => e.data()["id"]);
+    print("firebase: ${idsTasksFirebase}");
+
+    validateTask();
+    // FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser?.email);
+    // menuRepository.findAllTasks().forEach((element) {
+    //   FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").add(
+    //     {"id": element.id ,"title" : element.title, "date" : element.dateTime, "itsDone" : element.itsDone}
+    //   );
+    // });
   }
+
+  validateTask() async{
+
+    QuerySnapshot<Map<String, dynamic>> tasksFirebase = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").get();
+    List<Todo> tasksObjectBox = menuRepository.findAllTasks();
+    List<int> tasks = tasksFirebase.docs.map((e) => e.data()["id"] as int).toList();
+
+    tasksObjectBox.forEach((element) => tasks.forEach((element) { }));
+
+    tasks.forEach((element) {
+      // print(element);
+    });
+
+    tasksObjectBox.forEach((taskObjectBox) {
+      // print("${taskObjectBox.title} exists? ${tasks.contains(taskObjectBox.id)}");
+    });
+  }
+
+  // Future<void> uplodFirebase() async{
+  //   var connectivityResult = await (Connectivity().checkConnectivity());
+
+  //   if (connectivityResult == ConnectivityResult.none) {
+  //     connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+  //         if (result != ConnectivityResult.none) 
+  //         {
+            
+  //         } 
+  //       }
+  //     );
+  //   }
+  // }
 }

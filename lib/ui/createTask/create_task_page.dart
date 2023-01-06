@@ -32,7 +32,6 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       backgroundColor: ListColors.white,
       appBar: AppBar(

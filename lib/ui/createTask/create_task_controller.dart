@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/createTask/create_task_repository.dart';
@@ -25,10 +29,21 @@ class CreateTaskController{
       todo!.title = taskController.text;
       todo.itsDone = false;
       createTaskRepository.addTask(todo);
+      addTaskFirebase(todo);
       clearObject();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Saved task"))
       );
+    }
+  }
+
+  void addTaskFirebase(Todo todo){
+    try{
+      FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").add(
+        {"id": todo.id ,"title" : todo.title, "date" : todo.dateTime, "itsDone" : todo.itsDone}
+      );
+    }on FirebaseAuthException catch(e){
+      print("####################### ${e.code}");
     }
   }
 
@@ -70,5 +85,21 @@ class CreateTaskController{
       return selectedDate;
     }
   }
+
+  // validateConnection() async{
+
+  //   var connectivityResult = await (Connectivity().checkConnectivity());
+
+  //   if (connectivityResult == ConnectivityResult.none) {
+  //     connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+  //         if (result != ConnectivityResult.none) 
+  //         {
+            
+  //         } 
+  //       }
+  //     );
+  //   }
+
+  // }
 
 }

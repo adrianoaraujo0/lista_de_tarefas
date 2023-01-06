@@ -1,5 +1,4 @@
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,6 +21,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
+    menuController.validateUser();
     menuController.updatelistTasks();
     super.initState();
   }
@@ -29,6 +29,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void dispose() {
     menuController.deleteTask();
+    // menuController.connectivitySubscription.cancel();
     super.dispose();
   }
 
@@ -44,7 +45,6 @@ class _MenuPageState extends State<MenuPage> {
             initialData: const [],
             stream: menuController.streamTasks.stream,
             builder: (context, snapshot) {
-                menuController.teste();
                 return Stack(
                   children: [
                     Container(
