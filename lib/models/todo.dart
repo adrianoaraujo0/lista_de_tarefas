@@ -19,9 +19,16 @@ class Todo {
     };
   }
 
+  factory Todo.fromMap(Map map){
+    return Todo(
+      dateTime: map["date"],
+      title: map["title"],
+      itsDone: map["itsDone"]
+    );
+  }
+
   @override
   String toString() {
-    
     return "$id, $title, $dateTime, $itsDone";
   }
 

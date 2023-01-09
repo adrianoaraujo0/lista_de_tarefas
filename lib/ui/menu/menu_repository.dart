@@ -21,6 +21,8 @@ class MenuRepository{
 
   void updateTask(Todo todo) => ObjectBoxDatabase.todoBox.put(todo);
 
+  void updateManyTask(List<Todo> todos) => ObjectBoxDatabase.todoBox.putMany(todos);
+  
   void deleteTask(List<int> ids)=> ObjectBoxDatabase.todoBox.removeMany(ids);
 
 

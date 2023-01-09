@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -37,14 +38,16 @@ class CreateTaskController{
     }
   }
 
-  void addTaskFirebase(Todo todo){
+  Future<void> addTaskFirebase(Todo todo) async{
     try{
-      FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").add(
-        {"id": todo.id ,"title" : todo.title, "date" : todo.dateTime, "itsDone" : todo.itsDone}
-      );
-    }on FirebaseAuthException catch(e){
-      print("####################### ${e.code}");
+    FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").add(
+    {"id": todo.id ,"title" : todo.title, "date" : todo.dateTime, "itsDone" : todo.itsDone}
+    );
+    }catch(e){
+      print("${e} UNAVAILABLE");
     }
+    
+   
   }
 
   clearObject(){
