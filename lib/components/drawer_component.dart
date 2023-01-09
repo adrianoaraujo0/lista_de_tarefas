@@ -50,7 +50,21 @@ class DrawerComponent extends StatelessWidget {
                       SizedBox(height: MediaQuery.of(context).size.height*0.04),
                       buildText(context: context, title: "Private Policy", isSettings: true),
                       SizedBox(height: MediaQuery.of(context).size.height*0.04),
-                      buildText(context: context, function:drawerComponentController.backup ,title:"Backup", isSettings: true),
+                      StreamBuilder<bool>(
+                        stream: drawerComponentController.streamDrawer.stream,
+                        initialData: false,
+                        builder: (context, snapshot) {
+                          if(snapshot.data == false){
+                            return buildText(context: context, function: drawerComponentController.backup, title:"Backup", isSettings: true, isRoute: false);
+                          }else{
+                            return const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(color: ListColors.white, strokeWidth: 2)
+                            );
+                          }
+                        }
+                      ),
                       SizedBox(height: MediaQuery.of(context).size.height*0.04),
                       InkWell(
                         onTap: () =>  menuController.signOut(context),
@@ -67,14 +81,21 @@ class DrawerComponent extends StatelessWidget {
     );
   }
 
-  Widget buildText({required BuildContext context, dynamic function, required String title, bool isSettings = false}){
+  Widget buildText({required BuildContext context, dynamic function, required String title, bool isSettings = false, bool isRoute = true}){
     return InkWell(
-      onTap: function != null
+      onTap: isRoute == true
       ? () => Navigator.push(context, MaterialPageRoute(builder: (context) => function))
-      : (){},
+      : ()=> function(context),
       child: Text(title, style: TextStyle(color: ListColors.white, fontSize: isSettings ? 20 : 35)),
     );
   }
 
+  Widget buildCircularProgress(){
+    return const SizedBox(
+      height: 20,
+      width: 20,
+      child: CircularProgressIndicator(color: ListColors.white, strokeWidth: 2)
+    );
+  }
 
 }

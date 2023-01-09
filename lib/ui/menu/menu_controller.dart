@@ -43,21 +43,15 @@ class MenuController{
   }
 
  Future<void> deleteTaskFirebase() async{
-  try{
     QuerySnapshot<Map<String, dynamic>> x = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser?.email).collection("tasks").get();
     for (QueryDocumentSnapshot<Map<String, dynamic>> task in x.docs) {
         completedTasks().forEach((taskRemoved) { 
-          if(task.data()["id"] ==  taskRemoved.id){
-            print("vai remover ${task.data()["title"]}");
+          if(task.data()["uuid"] ==  taskRemoved.uuid){
             FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser?.email).collection("tasks").doc(task.id).delete();
           }
         }
       );
     }
-  }on FirebaseException catch(e){
-    print(e.code);
-  }
-  
   }
 
   void filterTasks(String name){  

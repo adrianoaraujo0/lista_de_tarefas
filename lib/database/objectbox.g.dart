@@ -9,7 +9,6 @@
 
 import 'dart:typed_data';
 
-// ignore: depend_on_referenced_packages
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:objectbox/internal.dart'; // generated code can access "internal" functionality
 import 'package:objectbox/objectbox.dart';
@@ -23,7 +22,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(1, 3797581759815929810),
       name: 'Todo',
-      lastPropertyId: const IdUid(4, 5463725641682732750),
+      lastPropertyId: const IdUid(5, 3295851750845401926),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -45,7 +44,13 @@ final _entities = <ModelEntity>[
             id: const IdUid(4, 5463725641682732750),
             name: 'itsDone',
             type: 1,
-            flags: 0)
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 3295851750845401926),
+            name: 'uuid',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(1, 4763210833986016115))
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
@@ -72,7 +77,7 @@ ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
       lastEntityId: const IdUid(1, 3797581759815929810),
-      lastIndexId: const IdUid(0, 0),
+      lastIndexId: const IdUid(1, 4763210833986016115),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
@@ -95,11 +100,14 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Todo object, fb.Builder fbb) {
           final titleOffset =
               object.title == null ? null : fbb.writeString(object.title!);
-          fbb.startTable(5);
+          final uuidOffset =
+              object.uuid == null ? null : fbb.writeString(object.uuid!);
+          fbb.startTable(6);
           fbb.addInt64(0, object.id ?? 0);
           fbb.addOffset(1, titleOffset);
           fbb.addInt64(2, object.dateTime?.millisecondsSinceEpoch);
           fbb.addBool(3, object.itsDone);
+          fbb.addOffset(4, uuidOffset);
           fbb.finish(fbb.endTable());
           return object.id ?? 0;
         },
@@ -112,6 +120,8 @@ ModelDefinition getObjectBoxModel() {
               dateTime: dateTimeValue == null
                   ? null
                   : DateTime.fromMillisecondsSinceEpoch(dateTimeValue),
+              uuid: const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 12),
               title: const fb.StringReader(asciiOptimization: true)
                   .vTableGetNullable(buffer, rootOffset, 6),
               itsDone: const fb.BoolReader()
@@ -140,4 +150,7 @@ class Todo_ {
 
   /// see [Todo.itsDone]
   static final itsDone = QueryBooleanProperty<Todo>(_entities[0].properties[3]);
+
+  /// see [Todo.uuid]
+  static final uuid = QueryStringProperty<Todo>(_entities[0].properties[4]);
 }

@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/ui/createTask/create_task_repository.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_controller.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateTaskController{
 
@@ -23,12 +20,14 @@ class CreateTaskController{
   CreateTaskRepository createTaskRepository = CreateTaskRepository();
 
   void addTask(BuildContext context, Todo? todo){
+
     formKey.currentState!.validate();
     validateDate(context, todo);
 
     if(formKey.currentState!.validate() && validateDate(context, todo)){
       todo!.title = taskController.text;
       todo.itsDone = false;
+      todo.uuid = const Uuid().v4();
       createTaskRepository.addTask(todo);
       addTaskFirebase(todo);
       clearObject();
@@ -39,15 +38,9 @@ class CreateTaskController{
   }
 
   Future<void> addTaskFirebase(Todo todo) async{
-    try{
     FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").add(
-    {"id": todo.id ,"title" : todo.title, "date" : todo.dateTime, "itsDone" : todo.itsDone}
+      {"id": todo.id , "uuid": todo.uuid, "title" : todo.title, "date" : todo.dateTime, "itsDone" : todo.itsDone}
     );
-    }catch(e){
-      print("${e} UNAVAILABLE");
-    }
-    
-   
   }
 
   clearObject(){
@@ -73,10 +66,8 @@ class CreateTaskController{
     
     if(value == "Today"){
       return now;
-    
     }else if(value == "Tomorrow"){
       return now.add( const Duration(days: 1));
-
     }else{
       DateTime? selectedDate = await showDatePicker(
         context: context,
@@ -84,25 +75,7 @@ class CreateTaskController{
         initialDate: DateTime.now(),
         lastDate: DateTime.utc(2050),
       );
-      
       return selectedDate;
     }
   }
-
-  // validateConnection() async{
-
-  //   var connectivityResult = await (Connectivity().checkConnectivity());
-
-  //   if (connectivityResult == ConnectivityResult.none) {
-  //     connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-  //         if (result != ConnectivityResult.none) 
-  //         {
-            
-  //         } 
-  //       }
-  //     );
-  //   }
-
-  // }
-
 }

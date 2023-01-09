@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:3797581759815929810",
-      "lastPropertyId": "4:5463725641682732750",
+      "lastPropertyId": "5:3295851750845401926",
       "name": "Todo",
       "properties": [
         {
@@ -28,13 +28,20 @@
           "id": "4:5463725641682732750",
           "name": "itsDone",
           "type": 1
+        },
+        {
+          "id": "5:3295851750845401926",
+          "name": "uuid",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "1:4763210833986016115"
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "1:3797581759815929810",
-  "lastIndexId": "0:0",
+  "lastIndexId": "1:4763210833986016115",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
