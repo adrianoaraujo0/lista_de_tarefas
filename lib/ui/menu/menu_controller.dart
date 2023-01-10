@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -16,7 +15,6 @@ class MenuController{
   BehaviorSubject<List<Todo>> streamTasks = BehaviorSubject<List<Todo>>();
   BehaviorSubject<bool> streamIconDeleteTasks = BehaviorSubject<bool>();
   BehaviorSubject<String> streamFilterTasks = BehaviorSubject<String>();
-  // late StreamSubscription<ConnectivityResult> connectivitySubscription;
 
   void updatelistTasks()=> streamTasks.sink.add(menuRepository.findAllTasks());
 
@@ -71,54 +69,15 @@ class MenuController{
   }
  
   Future<void> signOut(BuildContext context) async{
-    GoogleSignIn a = GoogleSignIn();
+    GoogleSignIn googleSignIn = GoogleSignIn();
     await FirebaseAuth.instance.signOut().whenComplete(
       (){
         if(FirebaseAuth.instance.currentUser == null){
-          a.signOut();
-          return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+          googleSignIn.signOut();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
         }
       }
     );
-  }
-
-  validateUser() async{
-
-    QuerySnapshot<Map<String, dynamic>> tasksFirebase = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").get();
-    List<int> idsTasksFirebase = tasksFirebase.docs.map((e) => e.data()["id"] as int).toList();
-    idsTasksFirebase.sort();
-
-    List<int> idsTasksObject = tasksFirebase.docs.map((e) => e.data()["id"] as int).toList();
-    idsTasksObject.sort();
-
-    print("box: ${idsTasksObject}");
-    tasksFirebase.docs.map((e) => e.data()["id"]);
-    print("firebase: ${idsTasksFirebase}");
-
-    validateTask();
-    // FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser?.email);
-    // menuRepository.findAllTasks().forEach((element) {
-    //   FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").add(
-    //     {"id": element.id ,"title" : element.title, "date" : element.dateTime, "itsDone" : element.itsDone}
-    //   );
-    // });
-  }
-
-  validateTask() async{
-
-    QuerySnapshot<Map<String, dynamic>> tasksFirebase = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).collection("tasks").get();
-    List<Todo> tasksObjectBox = menuRepository.findAllTasks();
-    List<int> tasks = tasksFirebase.docs.map((e) => e.data()["id"] as int).toList();
-
-    tasksObjectBox.forEach((element) => tasks.forEach((element) { }));
-
-    tasks.forEach((element) {
-      // print(element);
-    });
-
-    tasksObjectBox.forEach((taskObjectBox) {
-      // print("${taskObjectBox.title} exists? ${tasks.contains(taskObjectBox.id)}");
-    });
   }
 
 }

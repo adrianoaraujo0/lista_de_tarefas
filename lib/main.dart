@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/database/objectbox_database.dart';
 import 'package:lista_de_tarefas/login/login_page.dart';
+import 'package:lista_de_tarefas/main_controller.dart';
 import 'package:lista_de_tarefas/ui/menu/menu_page.dart';
 
 void validatorConnection(ConnectivityResult result) async{
@@ -23,8 +24,24 @@ void main() async{
  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+
+    Connectivity().onConnectivityChanged.listen((event) {
+      MainController.result = event;
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context){

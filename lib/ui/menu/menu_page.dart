@@ -21,7 +21,6 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   void initState() {
-    menuController.validateUser();
     menuController.updatelistTasks();
     super.initState();
   }
